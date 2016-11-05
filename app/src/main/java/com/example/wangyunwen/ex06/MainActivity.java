@@ -88,6 +88,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 musicService.play();
+                currentTime.setText(time.format(musicService.mp.getCurrentPosition()));
+                totalTime.setText(time.format(musicService.mp.getDuration()));
+                seekBar.setMax(musicService.mp.getDuration());
+                seekBar.setProgress(musicService.mp.getCurrentPosition());
                 if(musicService.mp.isPlaying()) {
                     play.setText("PAUSE");
                     status.setText("Playing");
@@ -95,19 +99,21 @@ public class MainActivity extends AppCompatActivity {
                     mHandler.post(mRunnable);
                 } else {
                     play.setText("PLAY");
-                    status.setText("Pausing");
+                    status.setText("Pause");
                     isRotating = false;
                 }
-                currentTime.setText(time.format(musicService.mp.getCurrentPosition()));
-                totalTime.setText(time.format(musicService.mp.getDuration()));
-                seekBar.setMax(musicService.mp.getDuration());
-                seekBar.setProgress(musicService.mp.getCurrentPosition());
             }
         });
         stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //
+                musicService.stop();
+                mHandler.removeCallbacks(mRunnable);
+                isRotating = false;
+                seekBar.setProgress(0);
+                currentTime.setText("00:00");
+                play.setText("PLAY");
+                status.setText("Stop");
             }
         });
         quit.setOnClickListener(new View.OnClickListener() {
